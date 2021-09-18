@@ -1,47 +1,9 @@
 import React, { Fragment } from 'react';
 import { ErrorMessage, Field, Form, Formik, useField } from 'formik';
 import * as Yup from 'yup';
-
-const MyTextInput = ({ label, ...props }) => {
-    const [field, meta] = useField(props);
-    return (
-        <Fragment>
-            <label htmlFor={props.id || props.name}>{label}</label>
-            <input className="text-input" {...field} {...props} />
-            {meta.touched && meta.error ? (
-                <div className="error">{meta.error}</div>
-            ) : null}
-        </Fragment>
-    );
-};
-
-const MyCheckBox = ({ children, ...props }) => {
-    const [field, meta] = useField({ ...props, type: 'checkbox' });
-    return (
-        <Fragment>
-            <label className="checkbox-input">
-                <input type="checkbox" {...field} {...props} />
-                {children}
-            </label>
-            {meta.touched && meta.error ? (
-                <div className="error">{meta.error}</div>
-            ) : null}
-        </Fragment>
-    );
-};
-
-const MySelect = ({ label, ...props }) => {
-    const [field, meta] = useField(props);
-    return (
-        <Fragment>
-            <label htmlFor={props.id || props.name}>{label}</label>
-            <select {...field} {...props} />
-            {meta.touched && meta.error ? (
-                <div className="error">{meta.error}</div>
-            ) : null}
-        </Fragment>
-    );
-};
+import MyTextInput from './MyTextInput';
+import MyCheckBox from './MyCheckBox';
+import MySelect from './MySelect';
 
 const SignupForm = () => {
     return (
