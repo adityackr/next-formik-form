@@ -1,49 +1,128 @@
-import React from 'react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import React, { Fragment } from 'react';
+import { ErrorMessage, Field, Form, Formik, useField } from 'formik';
 import * as Yup from 'yup';
+
+const MyTextInput = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return (
+        <Fragment>
+            <label htmlFor={props.id || props.name}>{label}</label>
+            <input className="text-input" {...field} {...props} />
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </Fragment>
+    );
+};
+
+const MyCheckBox = ({ children, ...props }) => {
+    const [field, meta] = useField({ ...props, type: 'checkbox' });
+    return (
+        <Fragment>
+            <label className="checkbox-input">
+                <input type="checkbox" {...field} {...props} />
+                {children}
+            </label>
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </Fragment>
+    );
+};
+
+const MySelect = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return (
+        <Fragment>
+            <label htmlFor={props.id || props.name}>{label}</label>
+            <select {...field} {...props} />
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </Fragment>
+    );
+};
 
 const SignupForm = () => {
     return (
-        <Formik
-            initialValues={{ firstName: '', lastName: '', email: '' }}
-            validationSchema={Yup.object({
-                firstName: Yup.string()
-                    .max(15, 'Must be 15 characters or less')
-                    .required('*Required'),
-                lastName: Yup.string()
-                    .max(20, 'Must be 20 characters or less')
-                    .required('*Required'),
-                email: Yup.string()
-                    .email('Invalid email address!')
-                    .required('*Required'),
-            })}
-            onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 400);
-            }}
-        >
-            <Form>
-                <label htmlFor="firstName">First Name</label>
-                <Field name="firstName" type="text" placeholder="Jane" />
-                <ErrorMessage name="firstName" />
+        <Fragment>
+            <h1>Subscribe!</h1>
+            <Formik
+                initialValues={{
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    acceptedTerms: false,
+                    jobType: '',
+                }}
+                validationSchema={Yup.object({
+                    firstName: Yup.string()
+                        .max(15, 'Must be 15 characters or less')
+                        .required('*Required'),
+                    lastName: Yup.string()
+                        .max(20, 'Must be 20 characters or less')
+                        .required('*Required'),
+                    email: Yup.string()
+                        .email('Invalid email address!')
+                        .required('*Required'),
+                    acceptedTerms: Yup.boolean()
+                        .required('*Required')
+                        .oneOf(
+                            [true],
+                            'You must accpet the terms and conditions.'
+                        ),
+                    jobType: Yup.string()
+                        .oneOf(
+                            ['designer', 'development', 'product', 'other'],
+                            'Invalid Job Type'
+                        )
+                        .required('*Required'),
+                })}
+                onSubmit={(values, { setSubmitting }) => {
+                    setTimeout(() => {
+                        alert(JSON.stringify(values, null, 2));
+                        setSubmitting(false);
+                    }, 400);
+                }}
+            >
+                <Form>
+                    <MyTextInput
+                        label="First Name"
+                        name="firstName"
+                        type="text"
+                        placeholder="Jane"
+                    />
 
-                <label htmlFor="lastName">Last Name</label>
-                <Field name="lastName" type="text" placeholder="Doe" />
-                <ErrorMessage name="lastName" />
+                    <MyTextInput
+                        label="Last Name"
+                        name="lastName"
+                        type="text"
+                        placeholder="Doe"
+                    />
 
-                <label htmlFor="email">Email</label>
-                <Field
-                    name="email"
-                    type="email"
-                    placeholder="jane@example.com"
-                />
-                <ErrorMessage name="email" />
+                    <MyTextInput
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        placeholder="jane@example.com"
+                    />
 
-                <button type="submit">Submit</button>
-            </Form>
-        </Formik>
+                    <MySelect label="Job Type" name="jobType">
+                        <option value="">Select a job type</option>
+                        <option value="designer">Designer</option>
+                        <option value="development">Developer</option>
+                        <option value="product">Product Manager</option>
+                        <option value="other">Other</option>
+                    </MySelect>
+
+                    <MyCheckBox name="acceptedTerms">
+                        I accept the terms and conditions
+                    </MyCheckBox>
+
+                    <button type="submit">Submit</button>
+                </Form>
+            </Formik>
+        </Fragment>
     );
 };
 
